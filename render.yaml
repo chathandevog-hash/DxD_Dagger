@@ -1,12 +1,6 @@
 services:
-  - type: worker
-    name: RenameProBot-worker
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: python3 bot.py
-
   - type: web
-    name: RenameProBot-web
+    name: RenameProBot
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: python3 -m flask --app web run --host 0.0.0.0 --port $PORT
+    startCommand: python3 main.py
