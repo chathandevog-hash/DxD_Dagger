@@ -8,7 +8,7 @@ FORCE_SUB_CHANNEL_ID = -1002295034629
 
 ADMINS = [YOUR_REAL_ADMIN_ID]
 
-LOG_CHANNEL = -1001234567890
+LOG_CHANNEL = -1003500737391
 
 MONGO_URL = "mongodb+srv://chathanbot:chathan@cluster0.edekjxb.mongodb.net/?appName=Cluster0"
 DB_NAME = "RenameProBotDB"
