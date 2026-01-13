@@ -1,52 +1,47 @@
 import os
-import threading
-import asyncio
-import traceback
+import logging
+from pyrogram import Client, filters
 from flask import Flask
-from pyrogram import idle
 
-from utils.loader import load_plugins
-from database.mongo import init_db
-from bot_instance import bot   # ✅ IMPORT SAME BOT INSTANCE
+# ---------- Logging ----------
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
-# -------------------- WEB --------------------
+# ---------- Config ----------
+API_ID = int(os.getenv("API_ID", "0"))
+API_HASH = os.getenv("API_HASH", "")
+BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+
+if API_ID == 0 or not API_HASH or not BOT_TOKEN:
+    raise SystemExit("❌ API_ID / API_HASH / BOT_TOKEN env var set ചെയ്തിട്ടില്ല!")
+
+# ---------- Flask Web (Render keep-alive) ----------
 app_web = Flask(__name__)
 
 @app_web.get("/")
 def home():
-    return "✅ DxD_Dagger Alive"
+    return "✅ Bot is running!"
 
-@app_web.get("/health")
-def health():
-    return "OK"
+# ---------- Bot ----------
+app = Client(
+    "DxD_Dagger",
+    api_id=API_ID,
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN
+)
 
-def run_web():
-    port = int(os.environ.get("PORT", 10000))
-    print("✅ Web running on port:", port)
-    app_web.run(host="0.0.0.0", port=port)
+@app.on_message(filters.command("start"))
+async def start_cmd(client, message):
+    await message.reply_text(
+        "✅ Bot started!\n\nCommands:\n/start\n/ping"
+    )
 
-# -------------------- BOT --------------------
-async def run_bot():
-    try:
-        await init_db()
-        print("✅ MongoDB connected")
-
-        await bot.start()
-        print("✅ Bot connected to Telegram")
-
-        load_plugins()
-        print("✅ Plugins loaded")
-
-        await idle()  # keep bot alive
-
-    except Exception as e:
-        print("❌ BOT ERROR:", e)
-        traceback.print_exc()
+@app.on_message(filters.command("ping"))
+async def ping_cmd(client, message):
+    await message.reply_text("🏓 Pong!")
 
 if __name__ == "__main__":
-    # Start Web Server
-    t = threading.Thread(target=run_web, daemon=True)
-    t.start()
-
-    # Start Bot
-    asyncio.run(run_bot())
+    logging.info("✅ Starting bot...")
+    app.run()
