@@ -1,9 +1,11 @@
-from pyrogram import Client, filters
+from pyrogram import filters
+from bot_instance import bot
+
 from utils.buttons import main_menu
 from plugins.force_sub import force_sub_check
 from database.users import add_user
 
-@Client.on_message(filters.command("start"))
+@bot.on_message(filters.command("start"))
 async def start_cmd(client, message):
     ok = await force_sub_check(client, message)
     if not ok:
