@@ -31,6 +31,7 @@ async def cv_choose(client, query):
     await query.message.reply_text("✏️ Send rename name:")
     await query.answer()
 
+# ✅ FIX: ignore commands using regex
 @Client.on_message(filters.text & ~filters.regex(r"^/"))
 async def cv_rename(client, message):
     uid = message.from_user.id
