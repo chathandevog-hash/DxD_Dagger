@@ -31,7 +31,7 @@ async def cv_choose(client, query):
     await query.message.reply_text("✏️ Send rename name:")
     await query.answer()
 
-@Client.on_message(filters.text & ~filters.command)
+@Client.on_message(filters.text & ~filters.command())
 async def cv_rename(client, message):
     uid = message.from_user.id
     if uid not in STATE:
