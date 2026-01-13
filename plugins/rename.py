@@ -11,11 +11,10 @@ async def rename_menu(client, query):
 
 @Client.on_message(filters.document | filters.video | filters.audio)
 async def file_in(client, message):
-    # Save file for next rename step
     PENDING[message.from_user.id] = message
     await message.reply_text("✏️ Send new file name:")
 
-@Client.on_message(filters.text & ~filters.command())
+@Client.on_message(filters.text & ~filters.regex(r"^/"))
 async def rename_name(client, message):
     uid = message.from_user.id
     if uid not in PENDING:
@@ -27,19 +26,17 @@ async def rename_name(client, message):
     prog = await message.reply_text("⏳ Renaming...")
     await show_progress(prog, "Renaming...")
 
-    # Thumbnail only for rename
     thumb = await get_thumb(uid)
     thumb_id = thumb["file_id"] if thumb else None
 
-    file_path = await src.download()
+    path = await src.download()
 
     await message.reply_document(
-        file_path,
+        path,
         file_name=new_name,
         thumb=thumb_id,
         caption="✅ Renamed Successfully!"
     )
-
     try:
         await prog.delete()
     except:
