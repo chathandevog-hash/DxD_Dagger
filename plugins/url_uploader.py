@@ -18,7 +18,7 @@ async def url_menu(client, query):
     await query.message.reply_text("🔗 Send URL:")
     await query.answer()
 
-@Client.on_message(filters.text & ~filters.command)
+@Client.on_message(filters.text & ~filters.command())
 async def url_message(client, message):
     txt = message.text.strip()
     if not re.match(r"^https?://", txt):
@@ -35,7 +35,7 @@ async def url_out(client, query):
     await query.message.reply_text("✏️ Send rename name:")
     await query.answer()
 
-@Client.on_message(filters.text & ~filters.command)
+@Client.on_message(filters.text & ~filters.command())
 async def url_rename(client, message):
     uid = message.from_user.id
     if uid not in URL_STATE:
