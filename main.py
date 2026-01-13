@@ -3,12 +3,13 @@ import threading
 import asyncio
 import traceback
 from flask import Flask
-from pyrogram import Client, idle
+from pyrogram import idle
 
-from config import API_ID, API_HASH, BOT_TOKEN
 from utils.loader import load_plugins
 from database.mongo import init_db
+from bot_instance import bot   # ✅ IMPORT SAME BOT INSTANCE
 
+# -------------------- WEB --------------------
 app_web = Flask(__name__)
 
 @app_web.get("/")
@@ -21,16 +22,10 @@ def health():
 
 def run_web():
     port = int(os.environ.get("PORT", 10000))
+    print("✅ Web running on port:", port)
     app_web.run(host="0.0.0.0", port=port)
 
-bot = Client(
-    "DxD_Dagger",
-    api_id=API_ID,
-    api_hash=API_HASH,
-    bot_token=BOT_TOKEN,
-    workers=30
-)
-
+# -------------------- BOT --------------------
 async def run_bot():
     try:
         await init_db()
@@ -42,13 +37,16 @@ async def run_bot():
         load_plugins()
         print("✅ Plugins loaded")
 
-        await idle()
+        await idle()  # keep bot alive
 
     except Exception as e:
         print("❌ BOT ERROR:", e)
         traceback.print_exc()
 
 if __name__ == "__main__":
+    # Start Web Server
     t = threading.Thread(target=run_web, daemon=True)
     t.start()
+
+    # Start Bot
     asyncio.run(run_bot())
