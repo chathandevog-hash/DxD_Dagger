@@ -39,7 +39,7 @@ async def collect(client, message):
         FILES[uid].append(message)
         await message.reply_text(f"✅ Added ({len(FILES[uid])}/{BATCH_LIMIT})")
 
-@Client.on_message(filters.text & ~filters.command)
+@Client.on_message(filters.text & ~filters.command())
 async def batch_process(client, message):
     uid = message.from_user.id
     if uid not in MODE:
